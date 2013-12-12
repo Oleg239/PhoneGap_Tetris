@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>Cross-Platform Tetris</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="lib/jquery.mobile/jquery.mobile-1.2.0.min.css" /> 
+        <link rel="stylesheet" type="text/css" href="css/style.css" /> 
+        <link rel="stylesheet" href="index.css" />
+        
+		<script type="text/javascript" src="lib/jquery.min.js"></script>
+        <script type="text/javascript" src="lib/jquery.mobile/jquery.mobile-1.2.0.min.js"></script>		
+        <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+        <script type="text/javascript" charset="utf-8" src="index.js"></script>
+	 </head>
+	<!-- Скрипт по которому в игру загружается мелодия из папки проекта 	assets/www/track.mp3 --> 
+    <script type="text/javascript" charset="utf-8">
+    var playing = false;
+    var my_media = null;
+	function playAudio() {	    
+		if (!playing) {
+			 my_media.play();	
+			document.getElementById('sound').src = "img/sound_off.png";
+			playing = true;	
+			} else {
+				 my_media.pause();
+			    document.getElementById('sound').src = "img/sound_on.png";    
+			    playing = false; 
+			}
+	}
+	function initSound(src)
+	{
+		// Play the audio file at url
+	    //default path to test - http://audio.ibeat.org/content/p1rj1s/p1rj1s_-_rockGuitar.mp3
+	    if (device.platform == 'Android') {
+                src = '/android_asset/www/' + src;
+            }
+		//alert(src);
+		my_media  = new Media(src,
+	        // success callback
+	        function () {
+	            console.log("playAudio():Audio Success");
+	            
+	        },
+	        // error callback
+	        function (err) {
+	            console.log("playAudio():Audio Error: " + err);
+	           
+	        },
+	        onStatus
+	    );		
+	}
+	//  для вопсроизведения мелодии подряд, по кругу
+    function onStatus(status) {
+        if( status==Media.MEDIA_STOPPED ) {
+        	my_media.play();
+        }
+    }
+    </script>
+   	<!-- метод initSound - инициализирует и загружает в приложение аудио файл -->
+	<body onload="initSound('track.mp3'); init();">		
+
+	<div data-role="page">
+	
+	    <div data-role="header">
+	        <h1>Tetris</h1>
+	         <a href="#" class="btn large" onclick="playAudio();">
+	         <img id ="sound" src="img/sound_on.png" height="18" width="18"/>
+	         </a>         
+	    </div><!-- /header -->
+	
+	    <div data-role="content" data-fullscreen="true">
+	
+					<div id="start-menu" class="menu">
+							<img id="logo" src="img/logo.png"/>
+							<input id="start1" value="START" type="button" data-inline="true"/><br />
+							<a href="#camera" data-role="button" data-inline="true">Camera</a>
+					</div>
+
+				<div id="singlePage" class="ui-grid-a" style="display:none;">				
+					<div class="ui-block-a">
+                    	<canvas id="grid" width='240' height='420' style="display:inline;"></canvas>	
+					</div>
+					
+					 <div class="ui-block-b">
+                                                <ul id="right-input">
+                                                <li><input id="pause" value="Pause" type="button" data-inline="true" data-theme="a"/></li>
+                                                <li><input id="return" value="Return" type="button" data-inline="true" data-theme="a"/></li>
+                                                <li>&nbsp;</li>
+                                                <li>&nbsp;</li>
+                                                <li>&nbsp;</li>                                                                                                                                        
+                                                <li><input id="down" data-icon="arrow-d" value="DOWN" type="button" data-inline="true" data-theme="a"/></li>
+                                                <li><input id="up"  data-icon="arrow-u" value="ROTATE" type="button" data-inline="true" data-theme="a"/></li>
+                                                </ul>
+                	</div>
+				</div>
+	    </div><!-- /content -->
+	
+	    <div data-role="footer" data-position="fixed">
+	        <h4>Saint-Petersburg, 2013</h4>
+	    </div><!-- /footer -->
+	</div><!-- /page -->
+	
+	<div data-role="page" id="camera">
+	
+	    <div data-role="header">
+	        <h1>Tetris</h1>
+	         <a href="#" class="btn large" onclick="playAudio();">
+	         <img id ="sound" src="img/sound_on.png" height="18" width="18"/>
+	         </a>         
+	    </div><!-- /header -->
+	
+	    <div data-role="content" data-fullscreen="true">
+			<div class="api-div" id="api-camera">
+                <h2>Camera</h2>
+				<blockquote>
+  					<p>The <code>camera</code> object provides access to the device's default camera application.</p>
+				</blockquote>
+				<h4 class="help"><b>Take a Picture</b> using device camera.<br/>
+				<b>Select</b> to get picture from album or library.</h4>
+				<div class="ui-grid-a">
+					<div class="ui-block-a">
+						<div data-role="button" onclick="take_pic();" data-inline="true">Take a Picture</div>
+						<div data-role="button" onclick="album_pic();" data-inline="true">Select</div>
+					</div>
+				</div>				
+      			<img id="cameraImage" src="" />
+			</div>
+		</div>
+	
+	    <div data-role="footer" data-position="fixed">
+	        <h4>Saint-Petersburg, 2013</h4>
+	    </div><!-- /footer -->
+	</div><!-- /page -->
+			<script type="text/javascript" charset="utf-8" src="apis/accelerometer.js"></script>
+			<script type="text/javascript" charset="utf-8" src="apis/camera.js"></script>
+			<script type="text/javascript" charset="utf-8" src="apis/device.js"></script>
+			<script type="text/javascript" charset="utf-8" src="apis/events.js"></script>
+			<script type="text/javascript" src="lib/underscore-min.js?v=1218"></script>
+			<script type="text/javascript" src="lib/backbone-min.js?v=1218"></script>
+			<script type="text/javascript" src="js/utils.js?v=1227"></script>
+			<script type="text/javascript" src="js/model/tetris.js?v=0127"></script>
+			<script type="text/javascript" src="js/model/mediator.js?v=0127"></script>				
+			<script type="text/javascript" src="js/view/grid.js?v=0127"></script>		
+			<script type="text/javascript" src="js/view/app.js?v=0127"></script>
+			<script type="text/javascript" src="js/main.js?v=0127"></script>
+	</body>		
+</html>
