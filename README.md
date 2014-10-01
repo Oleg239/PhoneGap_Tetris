@@ -9,4 +9,4 @@ Changes:
  + camera
  + sound
 
-Ready apps: https://build.phonegap.com/apps/693893/builds
+Ready app: https://build.phonegap.com/apps/693893/builds
